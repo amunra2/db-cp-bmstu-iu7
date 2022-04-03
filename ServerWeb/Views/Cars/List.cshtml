@@ -1,0 +1,14 @@
+﻿
+@*// Будет подставлено в RenderBody основого шаблона (если он указан)*@
+
+<h2>Все автомобили</h2>
+<h3>@Model.currentCategory</h3>
+
+@{
+    foreach(var Car in Model.allCars) {
+        <div>
+            <h2>Модель: @Car.name</h2>
+            <p>Цена: @Car.price.ToString("c")</p>
+        </div>
+    }
+}
