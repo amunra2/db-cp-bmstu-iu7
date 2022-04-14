@@ -13,16 +13,8 @@
 
 <div class="row mt-5 md-2">
     @{
-    foreach(var Car in Model.allCars) {
-        @*Блок занимает 4 колонки (всего колонок в Bootstrap 12)*@
-        <div class="col-lg-4">
-        @*(img-thumbnail -- класс Bootstrap)*@
-            <img class="img-thumbnail" src="@Car.img" alt="@Car.name" />
-            <h2>@Car.name</h2>
-            <p>@Car.shortDesc</p>
-            <p>Цена: @Car.price.ToString("c")</p>
-            <p><a class="btn btn-warning" href="#">Подробнее</a></p>
-        </div>
+    foreach(Car car in Model.allCars) {
+        @Html.Partial("AllCars", car)
     }
 }
 
