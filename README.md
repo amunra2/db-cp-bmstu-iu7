@@ -32,6 +32,7 @@
        - [ ] ...
    - [ ] Исследовательская часть
        - [ ] ...
+
 - [ ] Код
     - [x] Гость
         - [x] Регистрация
@@ -54,3 +55,47 @@
         - [ ] Удалить сервер
         - [ ] Изменить сервер
         - [ ] Управление пользователями, вебхостингами, платформами
+
+- [ ] Разработка Программного Обеспечения
+    - [x] Слой Доступа к Данным (DAL)
+        - [x] Models
+            - [x] Server
+            - [x] Player
+            - [x] WebHosting
+            - [x] Platform
+            - [x] User
+            - [x] FavoriteServer
+            - [x] ServerPlayer
+        - [x] Repsoitory
+            - [x] ServerRepository
+            - [x] PlayerRepository
+            - [x] WebHostingRepository
+            - [x] PlatformRepository
+            - [x] UserRepository
+        - [x] Тестирование
+    - [x] Слой Бизнес Логики (DBL)
+        - [x] Repsoitory Interface
+            - [x] IServerRepository
+            - [x] IPlayerRepository
+            - [x] IWebHostingRepository
+            - [x] IPlatformRepository
+            - [x] IUserRepository
+        - [x] Service
+            - [x] ServerService
+            - [x] PlayerService
+            - [x] WebHostingService
+            - [x] PlatformService
+            - [x] UserService
+        - [x] Mock
+            - [x] ServerMock
+            - [x] PlayerMock
+            - [x] WebHostingMock
+            - [x] PlatformMock
+            - [x] UserMock
+        - [x] Тестирование
+    - [?] Презентационный уровень
+        - [?] Controller
+            - [?] HomeController
+            - [x] AccountController
+            - [?] UserController
+        
