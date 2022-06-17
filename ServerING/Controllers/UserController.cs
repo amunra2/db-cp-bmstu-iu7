@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ServerING.Interfaces;
 using ServerING.Mocks;
 using ServerING.Models;
 using ServerING.Services;
+using System.Collections.Generic;
 
 namespace ServerING.Controllers {
     public class UserController : Controller {
@@ -30,7 +32,7 @@ namespace ServerING.Controllers {
         }
 
 
-        public IActionResult DeleteFromFavorite(int? id) {
+        public IActionResult DeleteFromFavorite(int? id, string page) {
 
             if (id != null) {
 
@@ -39,7 +41,24 @@ namespace ServerING.Controllers {
                 serverService.DeleteFavoriteServer((int)id, user.Id);
             }
 
-            return RedirectToAction("Index", "Home");
+            if (page == "FavoriteServers") {
+                return RedirectToAction("FavoriteServers", "User");
+            }
+            else {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+
+        [Authorize]
+        public IActionResult FavoriteServers(string name, int? platformId, int page = 1, ServerSortState sortOrder = ServerSortState.NameAsc) {
+
+            User user = userService.GetUserByLogin(User.Identity.Name);
+            IEnumerable<Server> servers = userService.GetUserFavoriteServers(user);
+
+            var viewModel = serverService.ParseServers(servers, name, platformId, page, sortOrder);
+
+            return View(viewModel);
         }
     }
 }

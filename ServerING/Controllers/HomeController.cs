@@ -38,7 +38,8 @@ namespace ServerING.Controllers {
 
         public IActionResult Index(string name, int? platformId, int page = 1, ServerSortState sortOrder = ServerSortState.NameAsc) {
 
-            var viewModel = serverService.ParseServers(name, platformId, page, sortOrder);
+            var servers = serverService.GetAllServers();
+            var viewModel = serverService.ParseServers(servers, name, platformId, page, sortOrder);
 
             if (User.Identity.IsAuthenticated) {
                 User user = userService.GetUserByLogin(User.Identity.Name); // в сервисс ??? 

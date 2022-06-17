@@ -25,7 +25,7 @@ namespace ServerING.Services {
         IEnumerable<Server> GetServersByPlatformID(int id);
         IEnumerable<Server> GetServersByRating(int rating);
 
-        IndexViewModel ParseServers(string name, int? platformId, int page, ServerSortState sortOrder);
+        IndexViewModel ParseServers(IEnumerable<Server> parsedServers, string name, int? platformId, int page, ServerSortState sortOrder);
         DetailViewModel DetailServer(int serverId);
         IEnumerable<int> GetUserFavoriteServersIds(int userId);
 
@@ -117,7 +117,29 @@ namespace ServerING.Services {
             var filteredServers = servers;
 
             if ((platformId != null) && (platformId > 0)) {
-                filteredServers = serverRepository.GetByPlatformID((int)platformId);
+                var joinedServerPlatformAsc = servers.Join(platformRepository.GetAll(),
+                                          s => s.PlatformID,
+                                          p => p.Id,
+                                          (s, p) => new {
+                                              Id = s.Id,
+                                              ServerName = s.Name,
+                                              GameVersion = s.GameVersion,
+                                              Ip = s.Ip,
+                                              PlatformId = s.PlatformID,
+                                              WebHostingId = s.HostingID,
+                                              PlatformName = p.Name
+                                          });
+
+                filteredServers = joinedServerPlatformAsc
+                    .Where(j => j.PlatformId == platformId)
+                    .Select(j => new Server {
+                        Id = j.Id,
+                        Name = j.ServerName,
+                        GameVersion = j.GameVersion,
+                        Ip = j.Ip,
+                        HostingID = j.WebHostingId,
+                        PlatformID = j.PlatformId
+                    });
             }
 
             if (!String.IsNullOrEmpty(name)) {
@@ -221,9 +243,7 @@ namespace ServerING.Services {
         }
 
 
-        public IndexViewModel ParseServers(string name, int? platformId, int page, ServerSortState sortOrder) {
-
-            var parsedServers = serverRepository.GetAll();
+        public IndexViewModel ParseServers(IEnumerable<Server> parsedServers, string name, int? platformId, int page, ServerSortState sortOrder) {
 
             // Параметры пагинации 
             int pageSize = 3;
@@ -237,7 +257,6 @@ namespace ServerING.Services {
 
             // пагинация
             parsedServers = PaginationServers(parsedServers, page, pageSize);
-
 
 
             // Вывод - формируем модель представления

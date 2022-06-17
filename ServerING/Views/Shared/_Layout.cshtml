@@ -85,7 +85,7 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <ul class="nav navbar-nav navbar-right" data-in="#" data-out="#">
-                        <li class="dropdown dropdown-right">
+                        @*<li class="dropdown dropdown-right">
                             <a href="#home" class="dropdown-toggle smooth-menu" data-toggle="dropdown">Plarforms</a>
                             <ul class="dropdown-menu #">
                                 <li><a href="index.html">Platform One</a></li>
@@ -99,10 +99,15 @@
                                 <li><a href="index-9.html">Platform Nine <span class="badge">Trending</span></a></li>
                                 <li><a href="index-10.html">Platform Ten <span class="badge">New</span></a></li>
                             </ul>
-                        </li>
+                        </li>*@
                         @if (User.Identity.IsAuthenticated) {
                             <li>
-                                <a class="smooth-menu" href="#about">Favorite Servers</a>
+                                <a class="smooth-menu" asp-action="FavoriteServers" asp-controller="User">Favorite Servers</a>
+                            </li>
+                        } 
+                        @if (User.IsInRole("Admin")) {
+                            <li>
+                                <a class="smooth-menu" href="#about">Server Control</a>
                             </li>
                         } 
                         @*<li>

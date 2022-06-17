@@ -69,7 +69,7 @@ namespace ServerING.Mocks {
         }
 
         public FavoriteServer DeleteFavoriteServer(int id) {
-                FavoriteServer favoriteServer = _favoriteServers[id - 1];
+                FavoriteServer favoriteServer = _favoriteServers.FirstOrDefault(fs => fs.Id == id);
                 _favoriteServers.Remove(favoriteServer);
 
                 return favoriteServer;

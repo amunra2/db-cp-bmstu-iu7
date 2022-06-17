@@ -89,7 +89,7 @@ namespace ServerING.Controllers {
 
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
 
-                return RedirectToAction("Index", "Home");
+                return View(model);
             }
             return View(model);
         }

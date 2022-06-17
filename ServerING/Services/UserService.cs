@@ -17,6 +17,8 @@ namespace ServerING.Services {
 
         User GetUserByLogin(string login);
         IEnumerable<User> GetUsersByRole(string role);
+        
+        IEnumerable<Server> GetUserFavoriteServers(User user);
     }
 
     public class UserService : IUserService {
@@ -80,6 +82,10 @@ namespace ServerING.Services {
                 throw new Exception("No such user");
 
             userRepository.Update(user);
+        }
+
+        public IEnumerable<Server> GetUserFavoriteServers(User user) {
+            return userRepository.GetFavoriteServersByUserId(user.Id);
         }
     }
 }

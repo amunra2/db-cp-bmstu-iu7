@@ -1,12 +1,11 @@
 ﻿@model ServerING.ViewModels.IndexViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Favorite Servers";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Server IN Game</h1>
-    <h3 class="display-4">Best Servers For You Are Here</h3>
+    <h3 class="display-4">Your Favorite Servers</h3>
 </div>
 
 <form method="get">
@@ -22,12 +21,11 @@
 </form>
 
 
-
 <table class="table">
     <thead>
         <tr>
             <th>
-                <a asp-action="Index"
+                <a asp-action="FavoriteServers"
                     asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
                     asp-route-name="@(Model.FilterViewModel.SelectedName)"
                     asp-route-platformId="@(Model.FilterViewModel.SelectedPlatform)">
@@ -36,7 +34,7 @@
                 </a>
             </th>
             <th>
-                <a asp-action="Index" 
+                <a asp-action="FavoriteServers" 
                     asp-route-sortOrder="@(Model.SortViewModel.IPSort)"
                     asp-route-name="@(Model.FilterViewModel.SelectedName)"
                     asp-route-platformId="@(Model.FilterViewModel.SelectedPlatform)">
@@ -45,7 +43,7 @@
                 </a>
             </th>
             <th>
-                <a asp-action="Index" 
+                <a asp-action="FavoriteServers" 
                     asp-route-sortOrder="@(Model.SortViewModel.GVSort)"
                     asp-route-name="@(Model.FilterViewModel.SelectedName)"
                     asp-route-platformId="@(Model.FilterViewModel.SelectedPlatform)">
@@ -54,7 +52,7 @@
                 </a>
             </th>
             <th>
-                <a asp-action="Index" 
+                <a asp-action="FavoriteServers" 
                     asp-route-sortOrder="@(Model.SortViewModel.PlatformSort)"
                     asp-route-name="@(Model.FilterViewModel.SelectedName)"
                     asp-route-platformId="@(Model.FilterViewModel.SelectedPlatform)">
@@ -62,7 +60,7 @@
                     Platform
                 </a>
             </th>
-            <th>
+            @*<th>
                 <a asp-action="Index" 
                     asp-route-sortOrder="@(Model.SortViewModel.RatingSort)"
                     asp-route-name="@(Model.FilterViewModel.SelectedName)"
@@ -70,15 +68,14 @@
 
                     Rating
                 </a>
-            </th>
+            </th>*@
             <th>
                 Information
             </th>
-            @if (User.Identity.IsAuthenticated) {
-                <th>
-                    Favorite
-                </th>
-            }
+            
+            <th>
+                Favorite
+            </th>
             
         </tr>
     </thead>
@@ -90,35 +87,25 @@
                 <td>@server.Ip</td>
                 <td>@server.GameVersion</td>
                 <td>@Model.Platforms.FirstOrDefault(p => p.Id == server.PlatformID)?.Name</td>
-                <td>@server.Rating</td>
+                @*<td>@server.Rating</td>*@
                 <td><a class="btn btn-primary" asp-action="Detail" asp-controller="Home" asp-route-id="@server.Id">Detail</a></td>
 
                 <td>
-                    @if (User.Identity.IsAuthenticated) {
-                        if (Model.UserFavoriteServerIds.Contains(server.Id)) {
-                            <a class="btn btn-danger" 
-                                asp-action="DeleteFromFavorite" 
-                                asp-controller="User" 
-                                asp-route-id="@server.Id"
-                                asp-route-page="Index">Delete</a>
-                        }
-                        else {
-                            <a class="btn btn-success" asp-action="AddToFavorite" asp-controller="User" asp-route-id="@server.Id">Add</a>
-                        }
-                    }
+                    <a class="btn btn-danger" 
+                        asp-action="DeleteFromFavorite" 
+                        asp-controller="User" 
+                        asp-route-id="@server.Id"
+                        asp-route-page="FavoriteServers">Delete</a>
                 </td>
                 
             </tr>
-            
         }
     </tbody>
 </table>
 
-
-
 @if (Model.PageViewModel.HasPreviousPage)
 {
-    <a asp-action="Index"
+    <a asp-action="FavoriteServers"
        asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
        asp-route-name="@(Model.FilterViewModel.SelectedName)"
        asp-route-platformId="@(Model.FilterViewModel.SelectedPlatform)"
@@ -130,7 +117,7 @@
 }
 @if (Model.PageViewModel.HasNextPage)
 {
-    <a asp-action="Index"
+    <a asp-action="FavoriteServers"
        asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
        asp-route-name="@(Model.FilterViewModel.SelectedName)"
        asp-route-platformId="@(Model.FilterViewModel.SelectedPlatform)"
@@ -140,10 +127,3 @@
         <i class="glyphicon glyphicon-chevron-right"></i>
     </a>
 }
-
-
-
-@*<a class="btn btn-success" asp-controller="Cars" asp-action="Update" asp-route-id="@el.id">Изменить</a>*@
-
-
-
