@@ -101,5 +101,5 @@
             - [x] HomeController
             - [x] AccountController
             - [x] UserController
-            - [x] AdminController
+            - [ ] AdminController
         
