@@ -11,7 +11,7 @@ namespace ServerING.Mocks {
         }
 
         public User Delete(int id) {
-            User user = _users[id - 1];
+            User user = _users.FirstOrDefault(x => x.Id == id);
             _users.Remove(user);
 
             return user;
@@ -22,7 +22,7 @@ namespace ServerING.Mocks {
         }
 
         public User GetByID(int id) {
-            return _users[id - 1];
+            return _users.FirstOrDefault(x => x.Id == id);
         }
 
         public User GetByLogin(string login) {
@@ -59,13 +59,14 @@ namespace ServerING.Mocks {
 
 
         public void Update(User model) {
-            User user = _users[model.Id - 1];
+            User user = _users.FirstOrDefault(s => s.Id == model.Id);
+            int id = _users.FindIndex(u => u.Login == user.Login);
 
             user.Login = model.Login;
             user.Password = model.Password;
             user.Role = model.Role;
 
-            _users[user.Id - 1] = user;
+            _users[id] = user;
         }
 
         public FavoriteServer DeleteFavoriteServer(int id) {

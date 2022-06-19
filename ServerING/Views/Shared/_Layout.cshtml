@@ -28,13 +28,6 @@
     <link href="~/css/responsive.css" rel="stylesheet">
     <!-- ========== End Stylesheet ========== -->
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="assets/js/html5/html5shiv.min.js"></script>
-      <script src="assets/js/html5/respond.min.js"></script>
-    <![endif]-->
-
     <!-- ========== Google Fonts ========== -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800" rel="stylesheet">
@@ -59,6 +52,11 @@
                 <!-- Start Atribute Navigation -->
                 <div class="attr-nav button">
                     <ul>
+                        @if (User.Identity.IsAuthenticated) {
+                            <li>
+                                <a> Login: @User.Identity.Name</a>
+                            </li>
+                        } 
                         <li>
                             @if (User.Identity.IsAuthenticated) {
                                 <a asp-action="Logout" asp-controller="Account">Logout</a>
@@ -107,32 +105,9 @@
                         } 
                         @if (User.IsInRole("Admin")) {
                             <li>
-                                <a class="smooth-menu" href="#about">Server Control</a>
+                                <a class="smooth-menu" asp-action="Control" asp-controller="Admin">Server Control</a>
                             </li>
-                        } 
-                        @*<li>
-                            <a class="smooth-menu" href="#features">Register</a>
-                        </li>
-                        <li>
-                            <a class="smooth-menu" href="#overview">Login</a>
-                        </li>*@
-                        @*<li>
-                            <a class="smooth-menu" href="#pricing">Pricing</a>
-                        </li>
-                        <li>
-                            <a class="smooth-menu" href="#team">Team</a>
-                        </li>
-                        <li class="dropdown dropdown-right">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pages</a>
-                            <ul class="dropdown-menu" style="display: none; opacity: 1;">
-                                <li><a target="_blank" href="login.html">Login</a></li>
-                                <li><a target="_blank" href="register.html">Register</a></li>
-                                <li><a href="404.html">Error 404</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a class="smooth-menu" href="#contact">contact</a>
-                        </li>*@
+                        }
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div>

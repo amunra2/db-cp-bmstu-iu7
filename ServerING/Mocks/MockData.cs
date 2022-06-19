@@ -179,6 +179,12 @@ namespace ServerING.Mocks {
                 Password = "1234",
                 Role = "Admin"
             },
+            new User {
+                Id = 5,
+                Login = "user",
+                Password = "1234",
+                Role = "User"
+            }
         };
     }
 }

@@ -31,6 +31,8 @@ namespace ServerING.Services {
 
         void AddFavoriteServer(int serverId, int userId);
         void DeleteFavoriteServer(int serverId, int userId);
+
+        bool IsServerExists(Server server);
     }
 
     public class ServerService : IServerService {
@@ -127,7 +129,8 @@ namespace ServerING.Services {
                                               Ip = s.Ip,
                                               PlatformId = s.PlatformID,
                                               WebHostingId = s.HostingID,
-                                              PlatformName = p.Name
+                                              PlatformName = p.Name,
+                                              Rating = s.Rating
                                           });
 
                 filteredServers = joinedServerPlatformAsc
@@ -138,7 +141,8 @@ namespace ServerING.Services {
                         GameVersion = j.GameVersion,
                         Ip = j.Ip,
                         HostingID = j.WebHostingId,
-                        PlatformID = j.PlatformId
+                        PlatformID = j.PlatformId,
+                        Rating = j.Rating
                     });
             }
 
@@ -188,7 +192,8 @@ namespace ServerING.Services {
                                               Ip = s.Ip,
                                               PlatformId = s.PlatformID,
                                               WebHostingId = s.HostingID,
-                                              PlatformName = p.Name
+                                              PlatformName = p.Name,
+                                              Rating = s.Rating
                                           });
 
                 filteredServers = joinedServerPlatformAsc
@@ -199,7 +204,8 @@ namespace ServerING.Services {
                         GameVersion = j.GameVersion,
                         Ip = j.Ip,
                         HostingID = j.WebHostingId,
-                        PlatformID = j.PlatformId
+                        PlatformID = j.PlatformId,
+                        Rating = j.Rating
                     });
             }
             else if (sortOrder == ServerSortState.PlatformDesc) { // особая сортировка (сортировка одной таблицы, относительно другой)
@@ -213,7 +219,8 @@ namespace ServerING.Services {
                                               Ip = s.Ip,
                                               PlatformId = s.PlatformID,
                                               WebHostingId = s.HostingID,
-                                              PlatformName = p.Name
+                                              PlatformName = p.Name,
+                                              Rating = s.Rating
                                           });
 
                 filteredServers = joinedServerPlatformDesc
@@ -224,7 +231,8 @@ namespace ServerING.Services {
                         GameVersion = j.GameVersion,
                         Ip = j.Ip,
                         HostingID = j.WebHostingId,
-                        PlatformID = j.PlatformId
+                        PlatformID = j.PlatformId,
+                        Rating = j.Rating
                     });
             }
             else {
@@ -323,6 +331,23 @@ namespace ServerING.Services {
 
             FavoriteServer favoriteServer = userRepository.GetFavoriteServerByUserAndServerId(userId, serverId);
             userRepository.DeleteFavoriteServer(favoriteServer.Id);
+        }
+
+        public bool IsServerExists(Server server) {
+            
+            Server serverCheckName = serverRepository.GetByName(server.Name);
+
+            if (serverCheckName != null && server.Id != serverCheckName.Id) {
+                return true;
+            }
+
+            Server serverCheckIP = serverRepository.GetByIP(server.Ip);
+
+            if (serverCheckIP != null && server.Id != serverCheckName.Id) {
+                return true;
+            }
+
+            return false;
         }
     }
 }

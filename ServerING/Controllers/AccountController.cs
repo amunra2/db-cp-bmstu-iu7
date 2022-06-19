@@ -79,7 +79,7 @@ namespace ServerING.Controllers {
         public async Task<IActionResult> Login(LoginViewModel model) {
             if (ModelState.IsValid) {
 
-                User user = userService.GetUserByLogin(model.Login);
+                User user = userService.ValidateUser(model);
 
                 if (user != null) {
                     await Authenticate(user); // аутентификация
@@ -87,10 +87,11 @@ namespace ServerING.Controllers {
                     return RedirectToAction("Index", "Home");
                 }
 
-                ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                ModelState.AddModelError("", "Incorrect Login or Password");
 
                 return View(model);
             }
+
             return View(model);
         }
 
@@ -106,7 +107,7 @@ namespace ServerING.Controllers {
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role),
             };
 
             // создаем объект ClaimsIdentity

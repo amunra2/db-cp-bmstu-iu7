@@ -16,7 +16,7 @@ namespace ServerING.Models {
         [Required, MaxLength(30)]
         public string GameVersion { get; set; }
 
-        [Required]
+        /*[Required]*/
         public int Rating{ get; set; }
 
         [ForeignKey("WebHosting")]

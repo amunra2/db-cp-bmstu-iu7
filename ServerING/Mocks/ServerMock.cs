@@ -9,12 +9,26 @@ namespace ServerING.Mocks {
     public class ServerMock : MockData, IServerRepository {
 
         public void Add(Server model) {
+            model.Id = _servers.Count + 1;
             _servers.Add(model);
         }
 
         public Server Delete(int id) {
-            Server server = _servers[id - 1];
+            Server server = _servers.FirstOrDefault(x => x.Id == id);
+
             _servers.Remove(server);
+
+            IEnumerable<int> favoriteServersIds = _favoriteServers.Where(x => x.ServerID == id).Select(x => x.Id);
+            foreach (int favoriteServerId in favoriteServersIds.ToList()) { 
+                FavoriteServer favoriteServer = _favoriteServers.FirstOrDefault(x => x.Id == favoriteServerId);
+                _favoriteServers.Remove(favoriteServer);
+            }
+
+            IEnumerable<int> serverPlayersIds = _serverPlayers.Where(x => x.ServerID == id).Select(x => x.Id);
+            foreach (int serverPlayersId in serverPlayersIds.ToList()) {
+                ServerPlayer serverPlayer = _serverPlayers.FirstOrDefault(x => x.Id == serverPlayersId);
+                _serverPlayers.Remove(serverPlayer);
+            }
 
             return server;
         }
@@ -28,7 +42,7 @@ namespace ServerING.Mocks {
         }
 
         public Server GetByID(int id) {
-            return _servers[id - 1];
+            return _servers.FirstOrDefault(x => x.Id == id);
         }
 
         public Server GetByIP(string ip) {
@@ -83,7 +97,8 @@ namespace ServerING.Mocks {
         }
 
         public void Update(Server model) {
-            Server server = _servers[model.Id - 1];
+            Server server = _servers.FirstOrDefault(s => s.Id == model.Id);
+            int id = _servers.FindIndex(s => s.Name == server.Name && s.Ip == server.Ip);
 
             server.Name = model.Name;
             server.Ip = model.Ip;
@@ -91,7 +106,7 @@ namespace ServerING.Mocks {
             server.PlatformID = model.PlatformID;
             server.HostingID = model.HostingID;
 
-            _servers[model.Id - 1] = server;
+            _servers[id] = server;
         }
     }
 }

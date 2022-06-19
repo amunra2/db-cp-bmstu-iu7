@@ -16,4 +16,12 @@ namespace ServerING.Models
         [Required]
         public string Role{ get; set; }
     }
+
+
+    public enum UserSortState {
+        LoginAsc,       // по логину по возрастанию
+        LoginDesc,      // по логину по убыванию
+        RoleAsc,        // по роли по возрастанию
+        RoleDesc        // по роли по убыванию
+    }
 }
