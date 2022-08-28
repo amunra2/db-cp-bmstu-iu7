@@ -52,7 +52,9 @@ namespace ServerING.Repository {
         public void Update(User user) {
 
             try {
-                appDBContent.User.Update(user);
+                var curUser = appDBContent.User.FirstOrDefault(x => x.Id == user.Id);
+                appDBContent.Entry(curUser).CurrentValues.SetValues(user);
+                /*appDBContent.User.Update(user);*/
                 appDBContent.SaveChanges();
             }
             catch (Exception ex) {
@@ -62,7 +64,7 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<User> GetAll() {
-            return appDBContent.User;
+            return appDBContent.User.ToList();
         }
 
         public User GetByID(int id) {
@@ -74,17 +76,16 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<User> GetByRole(string role) {
-            return appDBContent.User.Where(u => u.Role == role);
+            return appDBContent.User.Where(u => u.Role == role).ToList();
         }
 
         public IEnumerable<Server> GetFavoriteServersByUserId(int id) {
-
             var favServs = appDBContent.FavoriteServer
                 .Where(x => x.UserID == id)
-                .Select(x => x.ServerID);
+                .Select(x => x.ServerID).ToList();
 
             IEnumerable<Server> servers = appDBContent.Server
-                .Where(x => favServs.Contains(x.Id));
+                .Where(x => favServs.Contains(x.Id)).ToList();
 
             return servers;
         }

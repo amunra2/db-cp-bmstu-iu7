@@ -4,32 +4,22 @@
     ViewBag.Title = Model.Login;
 }
 
-<style>
+@*<style>
     input[type=radio] {
     border: 0px;
-    width: 35%;
+    width: 50%;
     height: 1em;
 }
-</style>
+</style>*@
 
 <h2><b>User:</b> @Model.Login</h2>
 
 <h4><b>User Role</b></h4>
 
-<form asp-action="UserDetail" method="post" class="form-check form-check-inline">
+<form asp-action="UserDetail" method="post" class="form-check">
     
-    <input type="hidden" name="id" value="@Model.Id" />
-    
-    <div class ="row">
-        <div class="form-check-inline">
-            <h4>Admin</h4> <input asp-for="Role" type="radio" value="Admin"  class="form-cotrol"/>
-        </div>
-
-        <div class="form-check-inline">
-            <h4>User</h4>  <input asp-for="Role" type="radio" value="User" class="form-cotrol-sm"/> 
-        </div>
-    </div>
-    
-     <input class="btn btn-success" type="submit" value="Submit" />
-    
+    <p><input type="hidden" name="id" value="@Model.Id" /></p>
+    <p><input asp-for="Role" type="radio" value="Admin"  class="form-cotrol"/>Admin</p>
+    <p><input asp-for="Role" type="radio" value="User" class="form-cotrol-sm"/>User</p>
+    <p><input class="btn btn-success" type="submit" value="Submit" /></p>
 </form>

@@ -51,7 +51,9 @@ namespace ServerING.Repository {
         public void Update(Platform platform) {
 
             try {
-                appDBContent.Platform.Update(platform);
+                var curPlatform = appDBContent.Player.FirstOrDefault(x => x.Id == platform.Id);
+                appDBContent.Entry(curPlatform).CurrentValues.SetValues(platform);
+                /*appDBContent.Platform.Update(platform);*/
                 appDBContent.SaveChanges();
             }
             catch (Exception ex) {
@@ -61,11 +63,11 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<Platform> GetAll() {
-            return appDBContent.Platform;
+            return appDBContent.Platform.ToList();
         }
 
         public IEnumerable<Platform> GetByCost(int cost) {
-            return appDBContent.Platform.Where(p => p.Cost == cost);
+            return appDBContent.Platform.Where(p => p.Cost == cost).ToList();
         }
 
         public Platform GetByID(int id) {
@@ -77,7 +79,7 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<Platform> GetByPopularity(ushort popularity) {
-            return appDBContent.Platform.Where(p => p.Popularity == popularity);
+            return appDBContent.Platform.Where(p => p.Popularity == popularity).ToList();
         }
     }
 }

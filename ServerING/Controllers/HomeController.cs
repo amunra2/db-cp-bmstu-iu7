@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using ServerING.Interfaces;
-using ServerING.Mocks;
 using ServerING.Models;
 using ServerING.Services;
 using ServerING.ViewModels;
@@ -10,62 +8,83 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace ServerING.Controllers {
     public class HomeController : Controller {
-        /*private readonly ILogger<HomeController> _logger;
-        public HomeController(ILogger<HomeController> logger) {
-            _logger = logger; 
-        } */
+        private readonly ILogger<HomeController> _logger;
 
+        private IServerService serverService;
+        private IUserService userService;
+        private IWebHostingService webHostService;
+        private IPlayerService playerService;
 
+        private readonly IConfiguration configuration; //
 
-        /*public HomeController(IServerService serverService) {
+        public HomeController(IServerService serverService, IUserService userService, ILogger<HomeController> logger, 
+                              IConfiguration configuration, IPlayerService playerService, IWebHostingService webHostingService) {
             this.serverService = serverService;
-        }*/
-
-
-        /// Test Connect
-        static private IServerRepository serverRepository = new ServerMock();
-        static private IPlatformRepository platformRepository = new PlatformMock();
-        static private IUserRepository userRepository = new UserMock();
-
-        private IServerService serverService = new ServerService(serverRepository, platformRepository, userRepository);
-        private IUserService userService = new UserService(userRepository);
-        ///
-        
+            this.userService = userService;
+            this._logger = logger;
+            this.configuration = configuration;
+            this.playerService = playerService;
+            this.webHostService = webHostingService;
+        }
 
         public IActionResult Index(string name, int? platformId, int page = 1, ServerSortState sortOrder = ServerSortState.NameAsc) {
+            //var servers = serverService.GetAllServers(); // Для фильтрации+сортировки через БД не нужно
+            var viewModel = serverService.ParseServers(name, platformId, page, sortOrder, false, null);
 
-            var servers = serverService.GetAllServers();
-            var viewModel = serverService.ParseServers(servers, name, platformId, page, sortOrder);
+            Console.WriteLine(User.Identity.Name);
+            Console.WriteLine(configuration["DatabaseConnection"]); // TEST
 
             if (User.Identity.IsAuthenticated) {
-                User user = userService.GetUserByLogin(User.Identity.Name); // в сервисс ??? 
-                var userFavoriteServerIds = serverService.GetUserFavoriteServersIds(user.Id); // в сервисс ???
+                User user = userService.GetUserByLogin(User.Identity.Name);
+                var userFavoriteServerIds = serverService.GetUserFavoriteServersIds(user.Id);
 
                 viewModel.UserFavoriteServerIds = userFavoriteServerIds.ToList();
             }
 
+            _logger.Log(LogLevel.Information, "User: login = {0}; in method = {1}",
+                User.Identity.Name,
+                MethodBase.GetCurrentMethod().Name);
+
             return View(viewModel);
         }
 
+        public IActionResult Detail(int? id) {
+            _logger.Log(LogLevel.Information, "User: login = {0}; in method = {1}, ServerDetailId = {2}",
+                User.Identity.Name,
+                MethodBase.GetCurrentMethod().Name,
+                id);
 
-        public async Task<IActionResult> Detail(int? id) {
-
+            /*var detailViewModel = serverService.DetailServer((int)id);*/
             if (id != null) {
+                var server = serverService.GetServerByID((int)id);
 
-                var detailViewModel = serverService.DetailServer((int)id);
+                WebHosting webHosting = null;
+                IEnumerable<Player> players = new List<Player>();
 
-                if (detailViewModel != null) {
-                    return View(detailViewModel);
+                if (User.Identity.IsAuthenticated && server != null) {
+                    webHosting = serverService.GetWebHostingByServerId((int)id);
+                    players = serverService.GetPlayersByServerId((int)id);
+                }
+
+                DetailViewModel viewModel = new DetailViewModel {
+                    Server = server,
+                    WebHosting = webHosting,
+                    Players = players
+                };
+
+                if (viewModel != null) {
+                    return View(viewModel);
                 }
             }
 
+            
+
             return NotFound();
         }
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() {

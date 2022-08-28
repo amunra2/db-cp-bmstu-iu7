@@ -50,7 +50,9 @@ namespace ServerING.Repository {
         public void Update(WebHosting webHosting) {
 
             try {
-                appDBContent.WebHosting.Update(webHosting);
+                var curWebHosting = appDBContent.WebHosting.FirstOrDefault(x => x.Id == webHosting.Id);
+                appDBContent.Entry(curWebHosting).CurrentValues.SetValues(webHosting);
+                /*appDBContent.WebHosting.Update(webHosting);*/
                 appDBContent.SaveChanges();
             }
             catch (Exception ex) {
@@ -60,7 +62,7 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<WebHosting> GetAll() {
-            return appDBContent.WebHosting;
+            return appDBContent.WebHosting.ToList();
         }
 
         public WebHosting GetByID(int id) {
@@ -72,11 +74,11 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<WebHosting> GetByPricePerMonth(int pricePerMonth) {
-            return appDBContent.WebHosting.Where(w => w.PricePerMonth == pricePerMonth);
+            return appDBContent.WebHosting.Where(w => w.PricePerMonth == pricePerMonth).ToList();
         }
 
         public IEnumerable<WebHosting> GetBySubMonths(ushort subMonths) {
-            return appDBContent.WebHosting.Where(w => w.SubMonths == subMonths);
+            return appDBContent.WebHosting.Where(w => w.SubMonths == subMonths).ToList();
         }
     }
 }

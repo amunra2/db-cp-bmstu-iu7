@@ -9,7 +9,7 @@
 </div>
 
 <form method="get">
-    <div class="form-inline">
+    <div class="form-group">
         <label><b>Name  </b></label>
         <input name="name" placeholder="Name" value="@Model.FilterViewModel.SelectedName" class="form-control-sm" />
 
@@ -115,6 +115,9 @@
         Back
     </a>
 }
+
+<div class="btn btn-outline-dark">@Model.PageViewModel.PageNumber</div>
+
 @if (Model.PageViewModel.HasNextPage)
 {
     <a asp-action="FavoriteServers"

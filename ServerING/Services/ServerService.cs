@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-
+using Npgsql;
 
 namespace ServerING.Services {
 
@@ -24,8 +24,11 @@ namespace ServerING.Services {
         IEnumerable<Server> GetServersByHostingID(int id);
         IEnumerable<Server> GetServersByPlatformID(int id);
         IEnumerable<Server> GetServersByRating(int rating);
+        WebHosting GetWebHostingByServerId(int serverId);
+        IEnumerable<Player> GetPlayersByServerId(int serverId);
 
-        IndexViewModel ParseServers(IEnumerable<Server> parsedServers, string name, int? platformId, int page, ServerSortState sortOrder);
+        /*IndexViewModel ParseServers(IEnumerable<Server> parsedServers, string name, int? platformId, int page, ServerSortState sortOrder); // При фильтрации+сортировке с C# */
+        IndexViewModel ParseServers(string name, int? platformId, int page, ServerSortState sortOrder, bool isFavorite, int? userId); // При фильтрации+сортировке с БД
         DetailViewModel DetailServer(int serverId);
         IEnumerable<int> GetUserFavoriteServersIds(int userId);
 
@@ -41,10 +44,14 @@ namespace ServerING.Services {
         private readonly IPlatformRepository platformRepository;
         private readonly IUserRepository userRepository;
 
-        public ServerService(IServerRepository serverRepository, IPlatformRepository platformRepository, IUserRepository userRepository) {
+        private readonly AppDBContent appDBContent; // test sql quarry using
+
+        public ServerService(IServerRepository serverRepository, IPlatformRepository platformRepository, IUserRepository userRepository, AppDBContent appDBContent) {
             this.serverRepository = serverRepository;
             this.platformRepository = platformRepository;
             this.userRepository = userRepository;
+
+            this.appDBContent = appDBContent;
         }
 
 
@@ -112,10 +119,128 @@ namespace ServerING.Services {
 
             serverRepository.Update(server);
         }
+        
+        private IEnumerable<Server> PaginationServers(IEnumerable<Server> servers, int page, int pageSize) {
+
+            var paginatedServers = servers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            return paginatedServers;
+        }
 
 
+        public IndexViewModel ParseServers(string name, int? platformId, int page, ServerSortState sortOrder, bool isFavorite, int? userId) {
+            
+            /* Фильтрация и сотировка через C#
+
+            // фильтрация
+            parsedServers = FilterServersByName(parsedServers, name, platformId);
+
+            // сортировка
+            parsedServers = SortServersByOption(parsedServers, sortOrder);
+            */
+
+            // Фильтрация + сортировка через БД
+            var query = "select * from parseServers({0}, {1}, {2}, {3}, {4})";
+            IEnumerable<Server> parsedServers = appDBContent.Server.FromSqlRaw(query, name, platformId, sortOrder, isFavorite, userId);
+
+            // пагинация
+            // Параметры пагинации 
+            int pageSize = 10;
+            var count = parsedServers.Count();
+
+            parsedServers = PaginationServers(parsedServers, page, pageSize);
+
+            // Вывод - формируем модель представления
+            IndexViewModel viewModel = new IndexViewModel {
+                PageViewModel = new PageViewModel(count, page, pageSize),
+                SortViewModel = new SortViewModel(sortOrder),
+                FilterViewModel = new FilterViewModel(platformRepository.GetAll().ToList(), platformId, name),
+                Servers = parsedServers.ToList(),
+                Platforms = platformRepository.GetAll().ToList()
+            };
+
+            return viewModel;
+        }
+
+        public WebHosting GetWebHostingByServerId(int serverId) {
+            return serverRepository.GetWebHostingByServerId(serverId);
+        }
+
+        public IEnumerable<Player> GetPlayersByServerId(int serverId) {
+            return serverRepository.GetPlayersByServerID(serverId);
+        }
+
+
+        public DetailViewModel DetailServer(int serverId) {
+            if (serverId > 0) {
+                Server server = GetServerByID(serverId);
+
+                if (server != null) {
+                        IEnumerable<Player> players = serverRepository.GetPlayersByServerID(serverId);
+
+                        WebHosting webHosting = serverRepository.GetWebHostingByServerId(serverId);
+
+                        DetailViewModel viewModel = new DetailViewModel {
+                            Server = server,
+                            WebHosting = webHosting,
+                            Players = players
+                        };
+
+                        return viewModel;
+                    }
+                }
+
+            return null;
+        }
+
+        public IEnumerable<Server> GetServersByRating(int rating) {
+            return serverRepository.GetByRating(rating);
+        }
+
+        public IEnumerable<int> GetUserFavoriteServersIds(int userId) {
+            return userRepository.GetFavoriteServersByUserId(userId).Select(s => s.Id);
+        }
+
+        public void AddFavoriteServer(int serverId, int userId) {
+            /*UpdateServerRating(serverId, +1); // Реализовано через БД */
+
+            userRepository.AddFavoriteServer(serverId, userId);
+        }
+
+        public void DeleteFavoriteServer(int serverId, int userId) {
+            /*UpdateServerRating(serverId, -1); // Реализовано через БД */
+
+            FavoriteServer favoriteServer = userRepository.GetFavoriteServerByUserAndServerId(userId, serverId);
+            userRepository.DeleteFavoriteServer(favoriteServer.Id);
+        }
+
+        public bool IsServerExists(Server server) {
+            Server serverCheckName = serverRepository.GetByName(server.Name);
+
+            if (serverCheckName != null && server.Id != serverCheckName.Id) {
+                return true;
+            }
+
+            Server serverCheckIP = serverRepository.GetByIP(server.Ip);
+
+            if (serverCheckIP != null && server.Id != serverCheckIP.Id) {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        // Реализовано через БД
+        private void UpdateServerRating(int serverId, int change) {
+            Server server = serverRepository.GetByID(serverId);
+            server.Rating += change;
+
+            serverRepository.Update(server);
+        }
+
+        // При фильтрации через C#
         private IEnumerable<Server> FilterServersByName(IEnumerable<Server> servers, string name, int? platformId) {
-
             var filteredServers = servers;
 
             if ((platformId != null) && (platformId > 0)) {
@@ -153,7 +278,7 @@ namespace ServerING.Services {
             return filteredServers;
         }
 
-
+        // При сортировке через C#
         private IEnumerable<Server> SortServersByOption(IEnumerable<Server> servers, ServerSortState sortOrder) {
 
             IEnumerable<Server> filteredServers;
@@ -240,114 +365,6 @@ namespace ServerING.Services {
             }
 
             return filteredServers;
-        }
-
-
-        private IEnumerable<Server> PaginationServers(IEnumerable<Server> servers, int page, int pageSize) {
-
-            var paginatedServers = servers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-            return paginatedServers;
-        }
-
-
-        public IndexViewModel ParseServers(IEnumerable<Server> parsedServers, string name, int? platformId, int page, ServerSortState sortOrder) {
-
-            // Параметры пагинации 
-            int pageSize = 3;
-            var count = parsedServers.Count();
-
-            // фильтрация
-            parsedServers = FilterServersByName(parsedServers, name, platformId);
-
-            // сортировка
-            parsedServers = SortServersByOption(parsedServers, sortOrder);
-
-            // пагинация
-            parsedServers = PaginationServers(parsedServers, page, pageSize);
-
-
-            // Вывод - формируем модель представления
-            IndexViewModel viewModel = new IndexViewModel {
-                PageViewModel = new PageViewModel(count, page, pageSize),
-                SortViewModel = new SortViewModel(sortOrder),
-                FilterViewModel = new FilterViewModel(platformRepository.GetAll().ToList(), platformId, name),
-                Servers = parsedServers.ToList(),
-                Platforms = platformRepository.GetAll().ToList()
-            };
-
-            return viewModel;
-        }
-
-
-        public DetailViewModel DetailServer(int serverId) {
-
-            if (serverId > 0) {
-
-                Server server = GetServerByID(serverId);
-
-                if (server != null) {
-
-                    IEnumerable<Player> players = serverRepository.GetPlayersByServerID(serverId);
-
-                    WebHosting webHosting = serverRepository.GetWebHostingByServerId(serverId);
-
-                    DetailViewModel viewModel = new DetailViewModel {
-                        Server = server,
-                        WebHosting = webHosting,
-                        Players = players
-                    };
-
-                    return viewModel;
-                }
-            }
-
-            return null;
-        }
-
-        public IEnumerable<Server> GetServersByRating(int rating) {
-            return serverRepository.GetByRating(rating);
-        }
-
-        private void UpdateServerRating(int serverId, int change) {
-            Server server = serverRepository.GetByID(serverId);
-            server.Rating += change;
-
-            serverRepository.Update(server);
-        }
-
-        public IEnumerable<int> GetUserFavoriteServersIds(int userId) {
-            return userRepository.GetFavoriteServersByUserId(userId).Select(s => s.Id);
-        }
-
-        public void AddFavoriteServer(int serverId, int userId) {
-            UpdateServerRating(serverId, +1);
-
-            userRepository.AddFavoriteServer(serverId, userId);
-        }
-
-        public void DeleteFavoriteServer(int serverId, int userId) {
-            UpdateServerRating(serverId, -1);
-
-            FavoriteServer favoriteServer = userRepository.GetFavoriteServerByUserAndServerId(userId, serverId);
-            userRepository.DeleteFavoriteServer(favoriteServer.Id);
-        }
-
-        public bool IsServerExists(Server server) {
-            
-            Server serverCheckName = serverRepository.GetByName(server.Name);
-
-            if (serverCheckName != null && server.Id != serverCheckName.Id) {
-                return true;
-            }
-
-            Server serverCheckIP = serverRepository.GetByIP(server.Ip);
-
-            if (serverCheckIP != null && server.Id != serverCheckName.Id) {
-                return true;
-            }
-
-            return false;
         }
     }
 }

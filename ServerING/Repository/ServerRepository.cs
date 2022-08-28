@@ -52,7 +52,9 @@ namespace ServerING.Repository {
         public void Update(Server server) {
 
             try {
-                appDBContent.Server.Update(server);
+                var curServer = appDBContent.Server.FirstOrDefault(x => x.Id == server.Id);
+                /*appDBContent.Server.Update(curServer);*/
+                appDBContent.Entry(curServer).CurrentValues.SetValues(server);
                 appDBContent.SaveChanges();
             }
             catch (Exception ex) {
@@ -62,7 +64,7 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<Server> GetAll() {
-            return appDBContent.Server;
+            return appDBContent.Server.ToList();
         }
 
         public Server GetByID(int id) {
@@ -70,7 +72,7 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<Server> GetByGameVersion(string gameVersion) {
-            return appDBContent.Server.Where(s => s.GameVersion == gameVersion);
+            return appDBContent.Server.Where(s => s.GameVersion == gameVersion).ToList();
         }
 
         public Server GetByIP(string ip) {
@@ -82,20 +84,20 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<Server> GetByPlatformID(int id) {
-            return appDBContent.Server.Where(s => s.PlatformID == id);
+            return appDBContent.Server.Where(s => s.PlatformID == id).ToList();
         }
 
         public IEnumerable<Server> GetByWebHostingID(int id) {
-            return appDBContent.Server.Where(s => s.HostingID == id);
+            return appDBContent.Server.Where(s => s.HostingID == id).ToList();
         }
 
         public IEnumerable<Player> GetPlayersByServerID(int id) {
             Server server = appDBContent.Server.FirstOrDefault(s => s.Id == id);
 
             if (server != null) {
-                var playersOnServerIds = appDBContent.ServerPlayer.Where(x => x.ServerID == id).Select(x => x.PlayerID);
+                var playersOnServerIds = appDBContent.ServerPlayer.Where(x => x.ServerID == id).Select(x => x.PlayerID).ToList();
 
-                IEnumerable<Player> players = appDBContent.Player.Where(x => playersOnServerIds.Contains(x.Id));
+                IEnumerable<Player> players = appDBContent.Player.Where(x => playersOnServerIds.Contains(x.Id)).ToList();
 
                 return players;
             }
@@ -117,11 +119,11 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<Server> GetByRating(int rating) {
-            return appDBContent.Server.Where(x => x.Rating == rating);
+            return appDBContent.Server.Where(x => x.Rating == rating).ToList();
         }
 
         public IEnumerable<FavoriteServer> GetByUserID(int id) {
-            return appDBContent.FavoriteServer.Where(fs => fs.UserID == id);
+            return appDBContent.FavoriteServer.Where(fs => fs.UserID == id).ToList();
         }
     }
 }

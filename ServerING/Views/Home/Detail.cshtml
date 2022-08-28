@@ -14,14 +14,17 @@
 
             <dl class="dl-horizontal">
 
-                <dt><b>Id</b></dt>
-                <dd>@Model.Server.Id</dd>
+                @*<dt><b>Id</b></dt>
+                <dd>@Model.Server.Id</dd>*@
  
                 <dt><b>Ip</b></dt>
                 <dd>@Model.Server.Ip</dd>
 
                 <dt><b>Game Version</b></dt>
                 <dd>@Model.Server.GameVersion</dd>
+
+                <dt><b>Rating</b></dt>
+                <dd>@Model.Server.Rating</dd>
 
             </dl>
         </div>
@@ -33,8 +36,8 @@
 
                 <dl class="dl-horizontal">
 
-                    <dt><b>Id</b></dt>
-                    <dd>@Model.WebHosting.Id</dd>
+                    @*<dt><b>Id</b></dt>
+                    <dd>@Model.WebHosting.Id</dd>*@
  
                     <dt><b>Name</b></dt>
                     <dd>@Model.WebHosting.Name</dd>
@@ -52,7 +55,8 @@
 </div>
 
 
-<div>
+@if (User.Identity.IsAuthenticated) {
+    <div>
     <h3><b>Players</b></h3>
 
     <table class="table">
@@ -80,4 +84,9 @@
             }
         </tbody>
     </table>
-</div>
+    </div>
+}
+else {
+    <h3><b>Log In to see players of this Server</b></h3>
+}
+

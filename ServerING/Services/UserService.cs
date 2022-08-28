@@ -36,10 +36,7 @@ namespace ServerING.Services {
 
         private bool IsExist(User user) {
             return userRepository.GetAll()
-                .Any(item =>
-                    item.Login == user.Login &&
-                    item.Role == user.Role
-                    );
+                .Any(item => item.Login == user.Login);
         }
 
 
@@ -49,7 +46,6 @@ namespace ServerING.Services {
 
 
         public void AddUser(User user) {
-
             if (IsExist(user))
                 throw new Exception("Such user is already exist");
 

@@ -53,7 +53,9 @@ namespace ServerING.Repository {
         public void Update(Player player) {
 
             try {
-                appDBContent.Player.Update(player);
+                var curPlayer = appDBContent.Player.FirstOrDefault(x => x.Id == player.Id);
+                appDBContent.Entry(curPlayer).CurrentValues.SetValues(player);
+                /*appDBContent.Player.Update(player);*/
                 appDBContent.SaveChanges();
             }
             catch (Exception ex) {
@@ -63,7 +65,7 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<Player> GetAll() {
-            return appDBContent.Player;
+            return appDBContent.Player.ToList();
         }
 
         public Player GetByID(int id) {
@@ -71,11 +73,11 @@ namespace ServerING.Repository {
         }
 
         public IEnumerable<Player> GetByHoursPlayed(int hoursPlayed) {
-            return appDBContent.Player.Where(p => p.HoursPlayed == hoursPlayed);
+            return appDBContent.Player.Where(p => p.HoursPlayed == hoursPlayed).ToList();
         }
 
         public IEnumerable<Player> GetByLastPlayed(DateTime lastPlayed) {
-            return appDBContent.Player.Where(p => p.LastPlayed == lastPlayed);
+            return appDBContent.Player.Where(p => p.LastPlayed == lastPlayed).ToList();
         }
 
         public Player GetByNickname(string nickname) {

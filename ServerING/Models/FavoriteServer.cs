@@ -13,7 +13,7 @@ namespace ServerING.Models {
         [ForeignKey("User")]
         public int UserID { get; set; }
 
-        /*public virtual Server Server { get; set; }
-        public virtual User User { get; set; }*/
+        public virtual Server Server { get; set; }
+        public virtual User User { get; set; }
     }
 }

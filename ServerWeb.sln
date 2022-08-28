@@ -7,13 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerWeb", "ServerWeb\Serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerING", "ServerING\ServerING.csproj", "{CEAB22F5-063C-4F4A-84F6-2086F92BC5DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestingDAL", "UnitTestingDAL\UnitTestingDAL.csproj", "{5F8DF88B-4EA6-4B83-B3D2-95579589A322}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitDAL", "UnitDAL\UnitDAL.csproj", "{77669450-7681-4E70-8142-19F7DE3DFCE5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestRegistr", "TestRegistr\TestRegistr.csproj", "{52BE4C1D-FCD0-4BC8-AE9A-CD7CF102CCDB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitDBL", "UnitDBL\UnitDBL.csproj", "{1C521B8B-C653-4E3F-ACFF-5A57D3127D3D}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DataGenerator", "DataGenerator\DataGenerator.pyproj", "{141AFDD7-7D6B-442F-AE9A-49199F8FA639}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDelete", "ToDelete\ToDelete.csproj", "{FF98A71D-3F35-451C-8ECC-8878B0CDAADD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +31,6 @@ Global
 		{CEAB22F5-063C-4F4A-84F6-2086F92BC5DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEAB22F5-063C-4F4A-84F6-2086F92BC5DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEAB22F5-063C-4F4A-84F6-2086F92BC5DF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F8DF88B-4EA6-4B83-B3D2-95579589A322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F8DF88B-4EA6-4B83-B3D2-95579589A322}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F8DF88B-4EA6-4B83-B3D2-95579589A322}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F8DF88B-4EA6-4B83-B3D2-95579589A322}.Release|Any CPU.Build.0 = Release|Any CPU
 		{77669450-7681-4E70-8142-19F7DE3DFCE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{77669450-7681-4E70-8142-19F7DE3DFCE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77669450-7681-4E70-8142-19F7DE3DFCE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +43,12 @@ Global
 		{1C521B8B-C653-4E3F-ACFF-5A57D3127D3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C521B8B-C653-4E3F-ACFF-5A57D3127D3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C521B8B-C653-4E3F-ACFF-5A57D3127D3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{141AFDD7-7D6B-442F-AE9A-49199F8FA639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{141AFDD7-7D6B-442F-AE9A-49199F8FA639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF98A71D-3F35-451C-8ECC-8878B0CDAADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF98A71D-3F35-451C-8ECC-8878B0CDAADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF98A71D-3F35-451C-8ECC-8878B0CDAADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF98A71D-3F35-451C-8ECC-8878B0CDAADD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

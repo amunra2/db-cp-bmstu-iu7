@@ -25,8 +25,8 @@ namespace ServerING.Models {
         [ForeignKey("Platform")]
         public int PlatformID { get; set; }
 
-        /*public virtual WebHosting Hosting { get; set; }
-        public virtual Platform Platform { get; set; }*/
+        public virtual WebHosting Hosting { get; set; }
+        public virtual Platform Platform { get; set; }
     }
 
 
