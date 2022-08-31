@@ -51,9 +51,35 @@
 \imgs{cs_eng}{h!}{0.3}{Сайт для поиска серверов для игры <<Counter-Strike>> на зарубежном рынке}
 
 
+
 \subsection*{Вывод}
 
-\textbf{В РАЗРАБОТКЕ:} СОЗДАТЬ ТАБЛИЦУ +/-.
+В таблице \ref{tbl:compare_realizations} представлены результаты сравнения существующих решений. Выделенные критерии сравнения:
+
+\begin{itemize}
+    \item К1 -- просмотр списка серверов;
+    \item К2 -- сортировка списка серверов;
+    \item К3 -- просмотр серверов для разных платформ;
+    \item К4 -- добавление в избранное;
+    \item К5 -- получение подробной информации о сервере.
+\end{itemize}
+
+\captionsetup{justification=raggedleft,singlelinecheck=off}
+\begin{table}[H]
+    \centering
+	\caption{Сравнение существующих решений}
+    \label{tbl:compare_realizations}
+	\begin{tabular}{|l|l|l|l|l|l|}
+        \hline
+        \textbf{Название} & \textbf{К1} & \textbf{К2} & \textbf{К3} & \textbf{К4} & \textbf{К5} \\ \hline
+
+        <<MinecaftRating>>      & + & + & - & + & + \\ \hline
+        <<Сервера КС>>          & + & - & - & - & - \\ \hline
+        <<Minecraft Servers>>   & + & + & - & + & - \\ \hline
+        <<Game Tracker>>        & + & + & - & + & + \\ \hline
+
+    \end{tabular}
+\end{table}
 
 Таким образом, российский и зарубженый рынки предоставляют множество различных сайтов для нахождения серверов для игр. Стоит отметить то, что при этом сайты обладают рядом серьезных проблем.
 
@@ -117,9 +143,58 @@
 
 \section{Описание типов пользовтелей}
 
-\textbf{В РАЗРАБОТКЕ:} СОЗДАТЬ ТАБЛИЦУ.
+В задаче выделено 3 типа пользователей (таблица \ref{tbl:users_types}). 
 
-В данной задаче должно быть выделено 3 типа пользователей (таблица \ref{tbl:users_types}). 
+\captionsetup{justification=raggedleft,singlelinecheck=off}
+\begin{table}[H]
+    \centering
+	\caption{Типы пользователей}
+    \label{tbl:users_types}
+	\begin{tabular}{|p{5cm}|p{11cm}|}
+        \hline
+        \textbf{Тип} & \textbf{Функциональность} \\ \hline
+
+        Гость \par (неавторизованный пользователь) &
+            \begin{minipage}[t]{\linewidth}
+                \begin{itemize}[nosep,after=\strut]
+                    \item Просмотр списка серверов
+                    \item Выбор платформы для списка серверов
+                    \item Сортировка списка серверов
+                    \item Регистрация
+                    \item Авторизация
+                \end{itemize}
+            \end{minipage} 
+        \\ \hline
+
+        Авторизованный \par пользователь &
+            \begin{minipage}[t]{\linewidth}
+                \begin{itemize}[nosep,after=\strut]
+                    \item Добавление сервера в список избранных
+                    \item Выбор платформы для списка серверов
+                    \item Просмотр списка серверов
+                    \item Сортировка списка серверов
+                    \item Просмотр информации о хостинге сервера, а также списка игроков сервера
+                \end{itemize}
+            \end{minipage} 
+        \\ \hline
+
+        Администратор &
+            \begin{minipage}[t]{\linewidth}
+                \begin{itemize}[nosep,after=\strut]
+                    \item Добавление нового сервера на сайт
+                    \item Удаление сервера с сайта
+                    \item Изменение информации о сервере
+                    \item Изменение ролей зарегестрированных пользователей
+                    \item Добавление сервера в список избранных
+                    \item Просмотр списка серверов
+                    \item Выбор платформы для списка серверов
+                    \item Сортировка списка серверов
+                    \item Просмотр информации о хостинге сервера, а также списка игроков сервера
+                \end{itemize}
+            \end{minipage} 
+        \\ \hline
+    \end{tabular}
+\end{table}
 
 % \begin{center}
 %     \captionsetup{justification=raggedright,singlelinecheck=off}
@@ -178,9 +253,83 @@
 
 \section{Формализация данных}
 
-\textbf{В РАЗРАБОТКЕ:} СОЗДАТЬ ТАБЛИЦУ.
+В соответствии с задачей и типами пользователей, база данных должна содержать следующие модели (таблица \ref{tbl:db_tables}):
 
-В соответствии с задачей и типами пользователей, база данных должна содержать следующие модели (таблица \ref{tbl:db_tables})
+\begin{itemize}
+    \item сервер;
+    \item пользователь;
+    \item платформа;
+    \item игрок;
+    \item хостинг.
+\end{itemize}
+
+\captionsetup{justification=raggedleft,singlelinecheck=off}
+\begin{table}[H]
+    \centering
+	\caption{Модели базы данных}
+    \label{tbl:db_tables}
+	\begin{tabular}{|p{5cm}|p{11cm}|}
+        \hline
+        \textbf{Тип} & \textbf{Функциональность} \\ \hline
+        
+        Серевер &
+            \begin{minipage}[t]{\linewidth}
+                \begin{itemize}[nosep,after=\strut]
+                    \item ID
+                    \item Название
+                    \item IP-адрес
+                    \item Версия игры
+                    \item Рейтинг
+                    \item ID платформы
+                    \item ID хостинга
+                \end{itemize}
+            \end{minipage}
+        \\ \hline
+
+        Платформа &
+            \begin{minipage}[t]{\linewidth}
+                \begin{itemize}[nosep,after=\strut]
+                    \item ID
+                    \item Название
+                    \item Популярность
+                    \item Стоимость
+                \end{itemize}
+            \end{minipage}
+        \\ \hline
+
+        Хостинг &
+            \begin{minipage}[t]{\linewidth}
+                \begin{itemize}[nosep,after=\strut]
+                    \item ID
+                    \item Название
+                    \item Плата в месяц
+                \end{itemize}
+            \end{minipage}
+        \\ \hline
+
+        Игрок &
+            \begin{minipage}[t]{\linewidth}
+                \begin{itemize}[nosep,after=\strut]
+                    \item ID
+                    \item Никнейм
+                    \item Сыграно часов на сервере
+                    \item Дата последнего захода на сервер
+                \end{itemize}
+            \end{minipage}
+        \\ \hline
+
+        Пользователь &
+            \begin{minipage}[t]{\linewidth}
+                \begin{itemize}[nosep,after=\strut]
+                    \item ID
+                    \item Логин
+                    \item Пароль
+                    \item Роль
+                \end{itemize}
+            \end{minipage}
+        \\ \hline
+    \end{tabular}
+\end{table}
 
 % \begin{center}
 %     \captionsetup{justification=raggedright,singlelinecheck=off}
@@ -252,6 +401,9 @@
 \imgs{er}{h!}{0.3}{ER-диаграмма в нотации Чена}
 
 
+
+
+
 \section{Выбор модели базы данных}
 
 База данных \cite{db-is} --- упорядоченный набор структурированныой информации или данных, которые обычно хранятся в электронном виде в компьютерной системе. База данных обычно управляется системой управления базами данных (СУБД). Данные вместе с СУБД, а также приложения, которые с ними связаны, называются базой данных.
@@ -298,8 +450,6 @@
 
 
 \subsection*{Вывод}
-
-\textbf{В РАЗРАБОТКЕ:} СОЗДАТЬ ТАБЛИЦУ (надо ли?)
 
 Для поставленной задачи разработки информационной системы наилучшим обрзаом подходит реляционная модель хранения данных. Выбор обусловлен необходимостью хранить данные в виде структированных таблиц, между которыми проведена связь. 
 
