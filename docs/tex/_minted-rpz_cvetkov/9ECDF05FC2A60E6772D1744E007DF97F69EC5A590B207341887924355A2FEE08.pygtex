@@ -1,0 +1,126 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Выбрать} \PYG{n+nx}{сервера} \PYG{p}{(}\PYG{n+nx}{в} \PYG{n+nx}{случае} \PYG{n+nx}{необходимости} \PYG{n+nx}{берет} \PYG{n+nx}{избранные} \PYG{n+nx}{сервера} \PYG{n+nx}{пользователя} \PYG{n+nx}{по} \PYG{n+nx}{его} \PYG{n+nx}{айди}\PYG{p}{)}
+\PYG{n+nx}{CREATE} \PYG{n+nx}{OR} \PYG{n+nx}{REPLACE} \PYG{n+nx}{FUNCTION} \PYG{n+nx}{getServers}\PYG{p}{(}\PYG{n+nx}{isFavorite} \PYG{k+kt}{boolean}\PYG{p}{,} \PYG{n+nx}{userId} \PYG{n+nx}{integer}\PYG{p}{)}
+\PYG{n+nx}{RETURNS} \PYG{n+nx}{TABLE} \PYG{p}{(}\PYG{n+nx}{SrvId} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{SrvName} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{SrvIp} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{SrvGameVersion} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{SrvRating} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{SrvHostingID} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{SrvPlatformID} \PYG{n+nx}{integer}\PYG{p}{)}
+\PYG{n+nx}{AS} \PYG{n+nx}{\PYGZdl{}\PYGZdl{}}
+	\PYG{n+nx}{BEGIN}
+		\PYG{n+nx}{IF} \PYG{p}{(}\PYG{n+nx}{isFavorite} \PYG{n+nx}{is} \PYG{n+nx}{False}\PYG{p}{)} \PYG{n+nx}{THEN}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{k}{public}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Server\PYGZdq{}}\PYG{p}{;}
+		\PYG{n+nx}{ELSE}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{n+nx}{Fav}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}ServerID\PYGZdq{}}\PYG{p}{,} \PYG{n+nx}{Fav}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Name\PYGZdq{}}\PYG{p}{,} \PYG{n+nx}{Fav}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Ip\PYGZdq{}}\PYG{p}{,} \PYG{n+nx}{Fav}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}GameVersion\PYGZdq{}}\PYG{p}{,} \PYG{n+nx}{Fav}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Rating\PYGZdq{}}\PYG{p}{,} \PYG{n+nx}{Fav}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}HostingID\PYGZdq{}}\PYG{p}{,} \PYG{n+nx}{Fav}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}PlatformID\PYGZdq{}}
+			\PYG{n+nx}{FROM} \PYG{p}{(}\PYG{k}{public}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Server\PYGZdq{}} \PYG{n+nx}{AS} \PYG{n+nx}{S} \PYG{n+nx}{JOIN} \PYG{k}{public}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}FavoriteServer\PYGZdq{}} \PYG{n+nx}{AS} \PYG{n+nx}{FS} \PYG{n+nx}{ON} \PYG{n+nx}{S}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Id\PYGZdq{}} \PYG{o}{=} \PYG{n+nx}{FS}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}ServerID\PYGZdq{}}\PYG{p}{)} \PYG{n+nx}{AS} \PYG{n+nx}{Fav}
+			\PYG{n+nx}{WHERE} \PYG{n+nx}{Fav}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}UserID\PYGZdq{}} \PYG{o}{=} \PYG{n+nx}{userId}\PYG{p}{;}
+		\PYG{n+nx}{END} \PYG{n+nx}{IF}\PYG{p}{;}
+	\PYG{n+nx}{END}\PYG{p}{;}
+\PYG{n+nx}{\PYGZdl{}\PYGZdl{}} \PYG{n+nx}{LANGUAGE} \PYG{n+nx}{plpgsql}\PYG{p}{;}
+
+
+\PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Фильтрация} \PYG{n+nx}{по} \PYG{n+nx}{имени} \PYG{o}{+} \PYG{n+nx}{айди} \PYG{n+nx}{платформы}
+\PYG{n+nx}{CREATE} \PYG{n+nx}{OR} \PYG{n+nx}{REPLACE} \PYG{n+nx}{FUNCTION} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{isFavorite} \PYG{k+kt}{boolean}\PYG{p}{,} \PYG{n+nx}{userId} \PYG{n+nx}{integer}\PYG{p}{)}
+\PYG{n+nx}{RETURNS} \PYG{n+nx}{TABLE} \PYG{p}{(}\PYG{n+nx}{FltId} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{FltName} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{FltIp} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{FltGameVersion} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{FltRating} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{FltHostingID} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{FltPlatformID} \PYG{n+nx}{integer}\PYG{p}{)}
+\PYG{n+nx}{AS} \PYG{n+nx}{\PYGZdl{}\PYGZdl{}}
+	\PYG{n+nx}{BEGIN}
+		\PYG{n+nx}{IF} \PYG{p}{(}\PYG{n+nx}{nameParse} \PYG{n+nx}{IS} \PYG{n+nx}{NULL}\PYG{p}{)} \PYG{n+nx}{THEN}
+			\PYG{n+nx}{nameParse} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}\PYGZsq{}}\PYG{p}{;}
+		\PYG{n+nx}{END} \PYG{n+nx}{IF}\PYG{p}{;}
+	
+		\PYG{n+nx}{IF} \PYG{p}{(}\PYG{n+nx}{platform\PYGZus{}id} \PYG{o}{\PYGZgt{}} \PYG{l+m+mf}{0}\PYG{p}{)} \PYG{n+nx}{THEN}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{getServers}\PYG{p}{(}\PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{WHERE} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{SrvPlatformID} \PYG{o}{=} \PYG{n+nx}{platform\PYGZus{}id} \PYG{n+nx}{AND} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{SrvName} \PYG{n+nx}{LIKE} \PYG{l+s+s1}{\PYGZsq{}\PYGZpc{}\PYGZsq{}} \PYG{o}{||} \PYG{n+nx}{nameParse} \PYG{o}{||} \PYG{l+s+s1}{\PYGZsq{}\PYGZpc{}\PYGZsq{}}\PYG{p}{;}
+		\PYG{n+nx}{ELSE}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{getServers}\PYG{p}{(}\PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{WHERE} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{SrvName} \PYG{n+nx}{LIKE} \PYG{l+s+s1}{\PYGZsq{}\PYGZpc{}\PYGZsq{}} \PYG{o}{||} \PYG{n+nx}{nameParse} \PYG{o}{||} \PYG{l+s+s1}{\PYGZsq{}\PYGZpc{}\PYGZsq{}}\PYG{p}{;}
+		\PYG{n+nx}{END} \PYG{n+nx}{IF}\PYG{p}{;}
+	\PYG{n+nx}{END}\PYG{p}{;}
+\PYG{n+nx}{\PYGZdl{}\PYGZdl{}} \PYG{n+nx}{LANGUAGE} \PYG{n+nx}{plpgsql}\PYG{p}{;}
+
+
+\PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Сортировка} \PYG{n+nx}{списка} \PYG{n+nx}{серверов} \PYG{p}{(}\PYG{l+m+mf}{8} \PYG{n+nx}{вариантов}\PYG{p}{)}
+\PYG{n+nx}{CREATE} \PYG{n+nx}{OR} \PYG{n+nx}{REPLACE} \PYG{n+nx}{FUNCTION} \PYG{n+nx}{sortServers}\PYG{p}{(}\PYG{n+nx}{nameParse} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{sortId} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{isFavorite} \PYG{k+kt}{boolean}\PYG{p}{,} \PYG{n+nx}{userId} \PYG{n+nx}{integer}\PYG{p}{)}
+\PYG{n+nx}{RETURNS} \PYG{n+nx}{TABLE} \PYG{p}{(}\PYG{n+nx}{Id} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{Name} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{Ip} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{GameVersion} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{Rating} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{HostingID} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{PlatformID} \PYG{n+nx}{integer}\PYG{p}{)}
+\PYG{n+nx}{AS} \PYG{n+nx}{\PYGZdl{}\PYGZdl{}}
+	\PYG{n+nx}{BEGIN}
+		\PYG{n+nx}{IF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{0}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Name} \PYG{n+nx}{ASC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltName}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{1}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Name} \PYG{n+nx}{DESC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltName} \PYG{n+nx}{DESC}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{2}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Ip} \PYG{n+nx}{ASC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltIp}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{3}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Ip} \PYG{n+nx}{DESC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltIp} \PYG{n+nx}{DESC}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{4}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{GameVersion} \PYG{n+nx}{ASC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltGameVersion}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{5}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{GameVersion} \PYG{n+nx}{DESC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltGameVersion} \PYG{n+nx}{DESC}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{6}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Rating} \PYG{n+nx}{ASC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltRating}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{7}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Rating} \PYG{n+nx}{DESC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltRating} \PYG{n+nx}{DESC}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{8}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Platform} \PYG{n+nx}{ASC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltId}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltName}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltIp}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltGameVersion}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltRating}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltHostingID}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltPlatformID}
+			\PYG{n+nx}{FROM} \PYG{p}{(}\PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S} \PYG{n+nx}{JOIN} \PYG{k}{public}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Platform\PYGZdq{}} \PYG{k+kr}{as} \PYG{n+nx}{P} \PYG{n+nx}{on} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltPlatformID} \PYG{o}{=} \PYG{n+nx}{P}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Id\PYGZdq{}}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{PS}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Name\PYGZdq{}}\PYG{p}{;}
+		\PYG{n+nx}{ELSEIF} \PYG{p}{(}\PYG{n+nx}{sortId} \PYG{o}{=} \PYG{l+m+mf}{9}\PYG{p}{)} \PYG{n+nx}{THEN} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Platform} \PYG{n+nx}{DESC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltId}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltName}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltIp}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltGameVersion}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltRating}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltHostingID}\PYG{p}{,} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{n+nx}{FltPlatformID}
+			\PYG{n+nx}{FROM} \PYG{p}{(}\PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S} \PYG{n+nx}{JOIN} \PYG{k}{public}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Platform\PYGZdq{}} \PYG{k+kr}{as} \PYG{n+nx}{P} \PYG{n+nx}{on} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltPlatformID} \PYG{o}{=} \PYG{n+nx}{P}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Id\PYGZdq{}}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{PS}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{PS}\PYG{p}{.}\PYG{l+s+s2}{\PYGZdq{}Name\PYGZdq{}} \PYG{n+nx}{DESC}\PYG{p}{;}
+		\PYG{n+nx}{ELSE} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Default}: \PYG{k+kt}{Name} \PYG{n+nx}{ASC}
+			\PYG{k}{return} \PYG{n+nx}{query}
+			\PYG{n+nx}{SELECT} \PYG{o}{*}
+			\PYG{n+nx}{FROM} \PYG{n+nx}{filterServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{)} \PYG{k+kr}{as} \PYG{n+nx}{S}
+			\PYG{n+nx}{ORDER} \PYG{n+nx}{BY} \PYG{n+nx}{S}\PYG{p}{.}\PYG{n+nx}{FltName}\PYG{p}{;}
+		\PYG{n+nx}{END} \PYG{n+nx}{IF}\PYG{p}{;}
+	\PYG{n+nx}{END}\PYG{p}{;}
+\PYG{n+nx}{\PYGZdl{}\PYGZdl{}} \PYG{n+nx}{LANGUAGE} \PYG{n+nx}{plpgsql}\PYG{p}{;}
+
+
+\PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Парсинг} \PYG{n+nx}{серверов} \PYG{p}{(}\PYG{n+nx}{обертка}\PYG{p}{)}
+\PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{l+m+mf}{1.} \PYG{n+nx}{Выбор} \PYG{n+nx}{серверов} \PYG{p}{(}\PYG{n+nx}{если} \PYG{n+nx}{isFavorite} \PYG{o}{\PYGZhy{}} \PYG{n+nx}{избранные} \PYG{n+nx}{сервера} \PYG{n+nx}{пользователя} \PYG{n+nx}{с} \PYG{n+nx}{айди} \PYG{o}{=} \PYG{n+nx}{userId}\PYG{p}{)}
+\PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{l+m+mf}{2.} \PYG{n+nx}{Фильтрация} \PYG{n+nx}{списка} \PYG{n+nx}{серверов} \PYG{n+nx}{по} \PYG{n+nx}{Названию} \PYG{p}{(}\PYG{n+nx}{вхождение}\PYG{p}{)} \PYG{n+nx}{и} \PYG{n+nx}{айди} \PYG{n+nx}{платформы}
+\PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{l+m+mf}{3.} \PYG{n+nx}{Сортировка} \PYG{n+nx}{полученных} \PYG{n+nx}{серверов} \PYG{p}{(}\PYG{l+m+mf}{8} \PYG{n+nx}{различных} \PYG{n+nx}{сортировок} \PYG{o}{\PYGZhy{}} \PYG{n+nx}{по} \PYG{n+nx}{умолчанию}: \PYG{k+kt}{по} \PYG{n+nx}{Названию} \PYG{n+nx}{ASC}\PYG{p}{)}
+\PYG{n+nx}{CREATE} \PYG{n+nx}{OR} \PYG{n+nx}{REPLACE} \PYG{n+nx}{FUNCTION} \PYG{n+nx}{parseServers}\PYG{p}{(}\PYG{n+nx}{nameParse} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{sortId} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{isFavorite} \PYG{k+kt}{boolean}\PYG{p}{,} \PYG{n+nx}{userId} \PYG{n+nx}{integer}\PYG{p}{)}
+\PYG{n+nx}{RETURNS} \PYG{n+nx}{TABLE} \PYG{p}{(}\PYG{n+nx}{Id} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{Name} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{Ip} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{GameVersion} \PYG{n+nx}{varchar}\PYG{p}{,} \PYG{n+nx}{Rating} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{HostingID} \PYG{n+nx}{integer}\PYG{p}{,} \PYG{n+nx}{PlatformID} \PYG{n+nx}{integer}\PYG{p}{)}
+\PYG{n+nx}{AS} \PYG{n+nx}{\PYGZdl{}\PYGZdl{}}
+	\PYG{n+nx}{BEGIN}
+		\PYG{k}{return} \PYG{n+nx}{query}
+		\PYG{n+nx}{SELECT} \PYG{o}{*} \PYG{n+nx}{FROM} \PYG{n+nx}{sortServers}\PYG{p}{(}\PYG{n+nx}{nameParse}\PYG{p}{,} \PYG{n+nx}{platform\PYGZus{}id}\PYG{p}{,} \PYG{n+nx}{sortId}\PYG{p}{,} \PYG{n+nx}{isFavorite}\PYG{p}{,} \PYG{n+nx}{userId}\PYG{p}{);}
+	\PYG{n+nx}{END}\PYG{p}{;}
+\PYG{n+nx}{\PYGZdl{}\PYGZdl{}} \PYG{n+nx}{LANGUAGE} \PYG{n+nx}{plpgsql}\PYG{p}{;}
+
+\PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n+nx}{Тестирование}
+\PYG{n+nx}{select} \PYG{o}{*}
+\PYG{k+kr}{from} \PYG{n+nx}{parseServers}\PYG{p}{(}\PYG{n+nx}{NULL}\PYG{p}{,} \PYG{n+nx}{NULL}\PYG{p}{,} \PYG{l+m+mf}{0}\PYG{p}{,} \PYG{n+nx}{False}\PYG{p}{,} \PYG{l+m+mf}{602}\PYG{p}{)}
+\end{Verbatim}

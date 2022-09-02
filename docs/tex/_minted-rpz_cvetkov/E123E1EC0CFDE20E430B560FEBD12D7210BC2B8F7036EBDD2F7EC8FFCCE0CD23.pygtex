@@ -1,0 +1,66 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Создать роль: Админ}
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{ROLE}\PYG{+w}{ }\PYG{k}{admin}\PYG{+w}{ }\PYG{k}{WITH}
+\PYG{+w}{  }\PYG{n}{LOGIN}
+\PYG{+w}{  }\PYG{n}{SUPERUSER}
+\PYG{+w}{  }\PYG{k}{CREATEDB}
+\PYG{+w}{  }\PYG{n}{CREATEROLE}
+\PYG{+w}{  }\PYG{n}{NOREPLICATION}
+\PYG{+w}{  }\PYG{n}{PASSWORD}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}admin\PYGZsq{}}
+\PYG{+w}{  }\PYG{k}{CONNECTION}\PYG{+w}{ }\PYG{k}{LIMIT}\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{;}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Привелегии}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{ALL}\PYG{+w}{ }\PYG{k}{PRIVILEGES}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{ALL}\PYG{+w}{ }\PYG{n}{TABLES}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{k}{schema}\PYG{+w}{ }\PYG{k}{public}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{k}{admin}\PYG{p}{;}
+
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Создать роль: Неавторизованный пользователь}
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{ROLE}\PYG{+w}{ }\PYG{n}{non\PYGZus{}auth\PYGZus{}user}\PYG{+w}{ }\PYG{k}{WITH}
+\PYG{+w}{  }\PYG{n}{LOGIN}
+\PYG{+w}{  }\PYG{n}{NOSUPERUSER}
+\PYG{+w}{  }\PYG{k}{NOCREATEDB}
+\PYG{+w}{  }\PYG{n}{NOCREATEROLE}
+\PYG{+w}{  }\PYG{n}{NOREPLICATION}
+\PYG{+w}{  }\PYG{n}{PASSWORD}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}non\PYGZus{}auth\PYGZus{}user\PYGZsq{}}
+\PYG{+w}{  }\PYG{k}{CONNECTION}\PYG{+w}{ }\PYG{k}{LIMIT}\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{;}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Привелегии}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Server\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{non\PYGZus{}auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Platform\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{non\PYGZus{}auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}User\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{non\PYGZus{}auth\PYGZus{}user}\PYG{p}{;}
+
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{INSERT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}User\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{non\PYGZus{}auth\PYGZus{}user}\PYG{p}{;}
+
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Создать роль: Авторизованный пользователь}
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{ROLE}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{+w}{ }\PYG{k}{WITH}
+\PYG{+w}{  }\PYG{n}{LOGIN}
+\PYG{+w}{  }\PYG{n}{NOSUPERUSER}
+\PYG{+w}{  }\PYG{k}{NOCREATEDB}
+\PYG{+w}{  }\PYG{n}{NOCREATEROLE}
+\PYG{+w}{  }\PYG{n}{NOREPLICATION}
+\PYG{+w}{  }\PYG{n}{PASSWORD}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}auth\PYGZus{}user\PYGZsq{}}
+\PYG{+w}{  }\PYG{k}{CONNECTION}\PYG{+w}{ }\PYG{k}{LIMIT}\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{;}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Привелегии}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Server\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Platform\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}FavoriteServer\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}ServerPlayer\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Player\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}User\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{SELECT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}WebHosting\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{INSERT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}FavoriteServer\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{INSERT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}User\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{UPDATE}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Server\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+
+\PYG{k}{GRANT}\PYG{+w}{ }\PYG{k}{DELETE}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}FavoriteServer\PYGZdq{}}\PYG{+w}{ }\PYG{k}{TO}\PYG{+w}{ }\PYG{n}{auth\PYGZus{}user}\PYG{p}{;}
+
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Удалить привилегию}
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} REVOKE SELECT ON public.\PYGZdq{}Platform\PYGZdq{} TO nonAuthUser;}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Удалить роль}
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} DROP ROLE nonAuthUser;}
+\end{Verbatim}

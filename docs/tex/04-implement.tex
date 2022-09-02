@@ -5,64 +5,164 @@
 
 \section{Средства реализации}
 
-При написании программного продукта был выбран язык \textit{Python} \cite{python-lang}. Это обусловлено следующими факторами:
+В качестве языка программирования был выбран язык \textit{C\#} \cite{csharp}. Он обладает возможность создания веб-приложений. Также данный язык программирования поддерживает принципы ООП, что крайне важно для поставленной задачи -- имеется возможность создать понятную и простую структуру программного кода.
+
+Фреймворком для работы с СУБД был выбран \textit{EntityFramework} \cite{ef}. Данный фреймворк является основным для языка C\# и имеет множество учебной литературы.
+
+\textit{Visual Studio} \cite{vs} был выбран в качестве среды разработки, так как имеется беспалтная версия для студентов, хороший дебаггер и полноценная поддержка языка C\#. 
+
+Для разработки непосредственно веб-приложения используется фреймворк \textit{ASP.NET} \cite{asp}. Данный фреймворк является абсолютно бесплатным и обладает широким функционалом для разработки. Имеет поддержку мультистраничных сайтов.
+
+
+\section{Архитектура приложения}
+
+Архитектура приложения построена на основе схемы MVC (модель-представление-контроллер) \cite{mvc}. Использование данной схемы позволяет разрабатывать каждый из компонентов независимо от других. Это имеет следующие преимущества:
 
 \begin{itemize}
-    \item объектно-ориентированный язык, что позволяет использовать структуру классов;
-    \item имеются необходимые библиотеки для реализации поставленной задачи;
-    \item существует много учебной литературы.
+    \item изменения одного из компонентов не влияют на работоспоспобность других компонентов;
+    \item имеется возможность подмены (веб-интерфейс может быть заменен на интерфейс десктопного приложения).
 \end{itemize}
 
-В качестве разработки интерфейса был выбран \textit{Qt Designer} \cite{qt-designer}. Он позволяет создать качественный интерфейс, так как имеет встроенный редактор выводимого окна.
+Схема взаимодействие компонентов MVC представлена на рисунке \ref{img:mvc}
+\imgs{mvc}{h!}{3}{Схема взаимодействие компонентов MVC}
 
-В качестве среды разработки был выбран \textit{Visual Studio Code} \cite{vs-code}. Данное приложение имеет большое количество плагинов для работы с кодом.
+
+\section{Структура классов}
+
+Классы приложения разбиты на 3 основных слоя:
+
+\begin{itemize}
+    \item слой доступа к данным, который состоит из классов моделей и репозиториев, для работы с данными;
+    \item слой бизнес логики, состоящих из классов-сервисов, которые реализуют основную логику веб-приложения;
+    \item слой контроллеров, которые, в ответ на действия польозвателя, вызывают соответствующие методы слоя бизнес логки.
+\end{itemize}
+
+На рисунке \ref{img:da_and_bl_layers} представлена схема взимодействия классов между слоем доступа к данным и слоем бизнес логики приложения. 
+\imgs{da_and_bl_layers}{h!}{0.35}{Взаимодействи классов доступа к данным и бизнес логики}
+
+\newpage
+
+\section{Реализация функций}
+
+При разработке были реализованы следующие функции базы данных, описанные в разделе \ref{functions}.
+
+\begin{enumerate}
+    \item Функция выбора серверов (листинг \ref{lst:getServers}).
+        \mylisting[sql]{parseServers.sql}
+            {firstline=2,lastline=17}{Функция выбора серверов}{getServers}{}
+
+    \item Функция фильтрации серверов (листинг \ref{lst:filterServers}).
+        \mylisting[sql]{parseServers.sql}
+            {firstline=21,lastline=41}{Функция фильтрации серверов}{filterServers}{}
+
+    \item Функция сортировки серверов (листинг \ref{lst:sortServers}).
+        \mylisting[sql]{parseServers.sql}
+            {firstline=45,lastline=106}{Функция сортировки серверов}{sortServers}{}
+
+    \item Функция парсинга серверов (обертка) (листинг \ref{lst:parseServers}).
+        \mylisting[sql]{parseServers.sql}
+            {firstline=113,lastline=120}{Функция парсинга серверов}{parseServers}{}
+\end{enumerate}
 
 
-\section{Реализация алгоритмов}
+\section{Реализация триггеров}
 
-В листинге \ref{lst:particle_move} представлен алгоритм перемещения частицы водопада за один кадр.
+В проектируемой базе данных определены следующие триггеры, которые описаны в разделе \ref{functions}.
 
-\begin{center}
-    \captionsetup{justification=raggedright,singlelinecheck=off}
-    \begin{lstlisting}[label=lst:particle_move,caption=Алгоритм перемещения частицы водопада за один кадр]
-def moveWaterfallParticle(self):
-    if (self.pos[1] <= WATER_LINE):
-        self.speed = BOUNCE_COEF * self.speed
-        self.direction[2] *= -1
-        self.vaporized = True
+\begin{enumerate}
+    \item Триггеры изменения рейтинга сервера и функция, реализующая работу этих триггеров (листинг \ref{lst:changeServerRating}).
+        \mylisting[sql]{changeServerRating.sql}
+            {firstline=5,lastline=30}{Триггеры изменения рейтинга сервера}{changeServerRating}{}
 
-    oldSpeed = self.speed
-    oldDirection = deepcopy(self.direction)
+    \item Триггер установки роли пользователя и функция, реализующая его работу (листинг \ref{lst:userRole}).
+        \mylisting[sql]{userRole.sql}
+            {firstline=3,lastline=17}{Триггер установки роли пользователя}{userRole}{}
+\end{enumerate}
 
-    self.direction[0] += self.gravityDirection[0]
-    self.direction[1] += self.gravityDirection[1]
-    self.direction[2] += self.gravityDirection[2]
 
-    if (self.vaporized):
-        self.speed -= self.acceleration
+\section{Реализация ролевой модели}
 
-        self.pos[0] = self.pos[0] + oldSpeed * oldDirection[0] + (self.speed * self.direction[0]) / 2 
-        self.pos[1] = self.pos[1] - (oldSpeed * oldDirection[1] + (self.speed * self.direction[1]) / 2)
-        self.pos[2] = self.pos[2] - (oldSpeed * oldDirection[2] + (self.speed * self.direction[2]) / 2)
-    else:
-        self.speed += self.acceleration
+В базу данных были введены следующие роли, рассмотренные в разделе \ref{roles}.
 
-        self.pos[0] = self.pos[0] + oldSpeed * oldDirection[0] + (self.speed * self.direction[0]) / 2
-        self.pos[1] = self.pos[1] + oldSpeed * oldDirection[1] + (self.speed * self.direction[1]) / 2
-        self.pos[2] = self.pos[2] + oldSpeed * oldDirection[2] + (self.speed * self.direction[2]) / 2
+\begin{enumerate}
+    \item Неавторизованный пользователь. В листинге \ref{lst:nonAuthUserRole} представлено создание роли и раздача необоходимых прав.
+        \mylisting[sql]{roles.sql}
+            {firstline=16,lastline=30}{Неавторизованный пользователь}{nonAuthUserRole}{}
 
-    self.age += 1
+    \item Авторизованный пользователь. В листинге \ref{lst:authUserRole} представлено создание роли и раздача необоходимых прав.
+        \mylisting[sql]{roles.sql}
+            {firstline=34,lastline=57}{Авторизованный пользователь}{authUserRole}{}
 
-    if (self.age + 100 > self.maxAge):
-        self.speed *= 0.9
-        self.direction[2] *= 1.014
-        self.color = glm.vec4(1, 1, 1, 1)
+    \item Администратор сайта. В листинге \ref{lst:adminRole} представлено создание роли и раздача необоходимых прав.
+        \mylisting[sql]{roles.sql}
+            {firstline=2,lastline=12}{Администратор сайта}{adminRole}{}
+\end{enumerate}
 
-    return self
-\end{lstlisting}
-\end{center}
+
+\section{Выбор СУБД}
+
+Выбор системы управления базой даных явялется важной частью разработки программного продукта. Выбранная СУБД должна соответствовать всем требованиям, которые предъявляются при разработке. Рассмотрим наиболее популярные СУБД:
+
+\begin{itemize}
+    \item MySQL;
+    \item Microsoft SQL Server;
+    \item Oracle;
+    \item PostgresSQL.
+\end{itemize}
+
+\subsection{MySQL}
+
+MySQL \cite{mysql} -- явялется одной из самых популярных СУБД. Распространяется бесплатно. Из-за высокого спроса, часто выходят новые обновления, исправляющие ошибки и добавляющие много нового функционала. Не подходит для простых задач из-за трудной настройки. Не имеет ряда функционала, который в других СУБД реализован по умолчанию.
+
+\subsection{Microsoft SQL Server}
+
+Microsoft SQL Server \cite{sqlserver} -- собственная разработка компании Microsoft. Имеется поддержка для работы на операционной системе Linux, но наилучшую поддержку имеет для операционной системы Windows и иных продуктов компании Microsoft. Имеет проблемы с оптимизацией использования ресурсов. Проста в использовании.
+
+\subsection{Oracle}.
+
+Oracle \cite{oracle} -- крайне популярна в крупных компаниях. Распространяется по подписке. Является одной из самых безопасных СУБД, так как каждая транзакция полностью изолирована друг от друга. Требует больших вычислительных ресурсов, тем самым не подходит для небольших проектов.
+
+\subsection{PostgresSQL}
+
+PostgresSQL \cite{postgres} -- одна из самых популярных СУБД, которые распространяются бесплатно и имеют высокое качество. Имеет хорошую оптимизацию, особенно под операционную систему Linux. Часто использует при разработке веб-приложений и хорошо подходит для небольших проектов. Имеет трудную настройку для неподготовленного пользователя.
+
+\subsection*{Вывод}
+
+Выбор СУБД будет произведен, исходя из следующих критериев:
+
+\begin{itemize}
+    \item К1 -- подробная документация;
+    \item К2 -- высокий уровень оптимизации;
+    \item К3 -- подходит для разработки небольших проектов;
+    \item К4 -- поддержка различных форматов файлов;
+    \item К5 -- распространяется бесплатно.
+\end{itemize}
+
+\captionsetup{justification=raggedleft,singlelinecheck=off}
+\begin{table}[H]
+    \centering
+	\caption{Сравнение СУБД}
+    \label{tbl:compare_subd}
+	\begin{tabular}{|l|l|l|l|l|l|}
+        \hline
+        \textbf{Название} & \textbf{К1} & \textbf{К2} & \textbf{К3} & \textbf{К4} & \textbf{К5} \\ \hline
+
+        <<MySQL>>                   & + & + & - & - & + \\ \hline
+        <<Microsoft SQL Server>>    & - & - & + & + & - \\ \hline
+        <<Oracle>>                  & + & - & - & + & - \\ \hline
+        <<PostgresSQL>>             & - & + & + & + & + \\ \hline
+
+    \end{tabular}
+\end{table}
+
+Исходя из того, что разрабатывается небольшое веб-приложение, то наилучшим образом подходит СУБД PostgresSQL, так как она обладает всеми необходимыми требованиями.
+
+
+\section{Полученный результат}
+
+...
 
 
 \section*{Вывод}
 
-В данном разделе были рассмотрены средства, с помощью которых было реализовано ПО, описана структура классов проекта, а также представлен листинг алгоритма перемещения частицы водопада за кадр.
+...

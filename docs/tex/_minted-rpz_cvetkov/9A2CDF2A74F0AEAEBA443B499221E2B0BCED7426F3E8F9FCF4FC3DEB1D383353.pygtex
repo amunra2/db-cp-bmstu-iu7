@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Выдает роль новому пользователю}
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Если пользователь имеет логин \PYGZsq{}admin\PYGZsq{}, то он автоматически получает роль админа}
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{OR}\PYG{+w}{ }\PYG{k}{REPLACE}\PYG{+w}{ }\PYG{k}{FUNCTION}\PYG{+w}{ }\PYG{n}{setUserRole}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{RETURNS}\PYG{+w}{ }\PYG{k}{trigger}\PYG{+w}{ }\PYG{k}{AS}\PYG{+w}{ }\PYG{err}{\PYGZdl{}\PYGZdl{}}
+\PYG{+w}{  }\PYG{k}{BEGIN}
+\PYG{+w}{    }\PYG{k}{NEW}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Role\PYGZdq{}}\PYG{+w}{ }\PYG{p}{:}\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}User\PYGZsq{}}\PYG{p}{;}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Если ник админ, то роль выдать админа}
+\PYG{+w}{    }\PYG{k}{IF}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{NEW}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Login\PYGZdq{}}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}admin\PYGZsq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{THEN}
+\PYG{+w}{      }\PYG{k}{NEW}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Role\PYGZdq{}}\PYG{+w}{ }\PYG{p}{:}\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}Admin\PYGZsq{}}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{END}\PYG{+w}{ }\PYG{k}{IF}\PYG{p}{;}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{k}{RETURN}\PYG{+w}{ }\PYG{k}{NEW}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{END}\PYG{p}{;}
+\PYG{err}{\PYGZdl{}\PYGZdl{}}\PYG{+w}{ }\PYG{k}{LANGUAGE}\PYG{+w}{ }\PYG{n}{plpgsql}\PYG{p}{;}
+
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{OR}\PYG{+w}{ }\PYG{k}{REPLACE}\PYG{+w}{ }\PYG{k}{TRIGGER}\PYG{+w}{ }\PYG{n}{setUserRoleTrigger}\PYG{+w}{ }\PYG{k}{BEFORE}\PYG{+w}{ }\PYG{k}{INSERT}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}User\PYGZdq{}}
+\PYG{+w}{  }\PYG{k}{FOR}\PYG{+w}{ }\PYG{k}{EACH}\PYG{+w}{ }\PYG{k}{ROW}\PYG{+w}{ }\PYG{k}{EXECUTE}\PYG{+w}{ }\PYG{k}{PROCEDURE}\PYG{+w}{ }\PYG{n}{setUserRole}\PYG{p}{();}
+\end{Verbatim}
