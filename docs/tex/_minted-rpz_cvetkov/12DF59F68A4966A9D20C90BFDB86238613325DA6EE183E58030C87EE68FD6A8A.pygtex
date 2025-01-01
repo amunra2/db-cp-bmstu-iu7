@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Первичный ключ таблицы Server}
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{INDEX}\PYG{+w}{ }\PYG{n}{server\PYGZus{}id\PYGZus{}index}\PYG{+w}{ }\PYG{k}{on}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Server\PYGZdq{}}\PYG{+w}{ }\PYG{k}{using}\PYG{+w}{ }\PYG{n}{btree}\PYG{p}{(}\PYG{l+s+ss}{\PYGZdq{}Id\PYGZdq{}}\PYG{p}{);}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Столбец табилцы Server}
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{INDEX}\PYG{+w}{ }\PYG{n}{server\PYGZus{}rating\PYGZus{}index}\PYG{+w}{ }\PYG{k}{on}\PYG{+w}{ }\PYG{k}{public}\PYG{p}{.}\PYG{l+s+ss}{\PYGZdq{}Server\PYGZdq{}}\PYG{+w}{ }\PYG{k}{using}\PYG{+w}{ }\PYG{n}{btree}\PYG{p}{(}\PYG{l+s+ss}{\PYGZdq{}Rating\PYGZdq{}}\PYG{p}{);}
+\end{Verbatim}
